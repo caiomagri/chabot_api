@@ -55,5 +55,6 @@ class Bot:
         response = openai.ChatCompletion.create(
             model=self.gpt_model,
             messages=messages,
+            max_tokens=int(os.getenv("CHATGPT_MAX_TOKENS", 400)),
         )
         return response["choices"][0]["message"]["content"]

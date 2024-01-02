@@ -1,8 +1,11 @@
-fastapi==0.89.1
-uvicorn==0.20.0
+fastapi==0.108.0
+uvicorn==0.25.0
+inject==5.0.0
 python-multipart
 coverage==6.3.2
-httpx
+httpx==0.26.0
 chatterbot==1.0.4
+openai==1.6.1
+load_dotenv==0.1.0
 pytz
-openai
+pydantic-settings==2.1.0

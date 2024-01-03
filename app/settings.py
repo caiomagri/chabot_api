@@ -23,8 +23,8 @@ class Settings(BaseSettings):
     OPENAI_API_VERSION: str = ""
     OPENAI_CHAT_MODEL: str = "gpt-3.5-turbo"
     OPENAI_API_TYPE: str = ""
-    OPENAI_TEMPERATURE: float = 0.4
-    OPENAI_TOP_P: float = 1
+    OPENAI_TEMPERATURE: float = 0.3
+    OPENAI_TOP_P: float = 0.95
     OPENAI_FREQUENCY_PENALTY: float = 0.4
     OPENAI_PRESENCE_PENALTY: float = 0.4
     OPENAI_MAX_TOKENS: int = 1000

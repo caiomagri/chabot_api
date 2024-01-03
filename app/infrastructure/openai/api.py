@@ -50,10 +50,10 @@ class ApiOpenaiClient(AIApiClient):
                 response["content"] = prompt_response.choices[0].text
         return response
 
-    def execute_chat_completion(self, prompt, options=None):
+    def execute_chat_completion(self, prompts, options=None):
         options = self._get_options(options)
 
-        options["messages"] = [{"role": "user", "content": prompt}]
+        options["messages"] = prompts
 
         options["stop"] = [" User:", " Assistant:"]
 

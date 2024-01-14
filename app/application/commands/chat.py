@@ -1,19 +1,20 @@
 import re
 import inject
-
-from chatterbot import ChatBot
-from chatterbot.trainers import ChatterBotCorpusTrainer
+import logging
 
 from app.settings import Settings
 from app.infrastructure.openai.api import ApiOpenaiClient
+from app.infrastructure.search.api import ApiSearchClient
 
-CONST_RESULT_PATTERN = r"<result>(.*?)</result>"
+_logger = logging.getLogger(__name__)
+
+CONST_RESULT_PATTERN = r"<RESULT>(.*?)</RESULT>"
+CONST_ITEM_PATTERN = r"<ITEM>(.*?)</ITEM>"
 
 
 class ChatBotCommand:
     MAPPER_CALLER = {
         "openai": "call_openai",
-        "chatterbot": "call_chatterbot",
     }
 
     @inject.autoparams()
@@ -21,26 +22,10 @@ class ChatBotCommand:
         self.settings = settings
         self.bot_type = self.settings.CHATBOT_TYPE
 
-        if self.bot_type == "chatterbot":
-            self.chatbot = ChatBot(
-                self.settings.CHATBOT_NAME,
-                storage_adapter=self.settings.CHATBOT_STORAGE_ADAPTER,
-                database_uri=self.settings.CHATBOT_DATABASE_URI,
-            )
-            self.trainer = ChatterBotCorpusTrainer(self.chatbot)
-            self.trainer.train(
-                "chatterbot.corpus.portuguese.greetings",
-                "chatterbot.corpus.portuguese.conversations",
-                "chatterbot.corpus.portuguese.suggestions",
-            )
-
     def execute(self, text, recover_prompt):
         prompt = recover_prompt("default_system_prompt")
         messages = self.build_messages(text, prompt)
         return getattr(self, self.MAPPER_CALLER[self.bot_type])(messages)
-
-    def call_chatterbot(self, prompt):
-        return self.chatbot.get_response(prompt)
 
     def call_openai(self, messages) -> str:
         client = ApiOpenaiClient(self.settings)
@@ -48,18 +33,15 @@ class ChatBotCommand:
         content = completion["content"].strip()
 
         try:
-            result = re.search(CONST_RESULT_PATTERN, content).group(1)
-            if result and result == "BUSCA":
-                message = "*Descrição*: Reservatório de água do radiador"
-                message += "\n*Preço*: R$ 204,88"
-                message += "\n*Marcar/Fabricante*: FIAT"
-                message += "\n*Tabela de Aplicação*: Argo 2017/2021, Cronos 2018/2021"
-                message += "\n*Compre agora*: https://pecapecas.com.br/produto/336205977-reservatorio-ex"
-
-                return message
-
+            result = re.search(CONST_RESULT_PATTERN, content)
+            if result and result.group(1) == "BUSCA":
+                search_client = ApiSearchClient(self.settings)
+                item = re.search(CONST_ITEM_PATTERN, content)
+                if item and item.group(1):
+                    content = search_client.search(item.group(1))
         except Exception as e:
-            pass
+            _logger.error(f"Erro ao consultar Produto {str(e)}")
+            content = "Tivemos um problema para fazer a busca. Por favor, tente novamente."
 
         return content
 

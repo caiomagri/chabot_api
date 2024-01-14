@@ -22,6 +22,5 @@ async def chatbot(
 ):
     response = chatbot_command.execute(payload.question, recover_prompt)
     return {
-        "answer": str(response),
-        "media_url": 'https://raw.githubusercontent.com/dianephan/flask_upload_photos/main/UPLOADS/DRAW_THE_OWL_MEME.png'
+        "answer": str(response)
     }

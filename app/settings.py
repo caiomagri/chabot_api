@@ -17,6 +17,12 @@ class Settings(BaseSettings):
     CHATBOT_STORAGE_ADAPTER: str = "chatterbot.storage.SQLStorageAdapter"
     CHATBOT_DATABASE_URI: str = "sqlite:///database.sqlite3"
 
+    # ECOMMERCE
+    BASE_ECOMMERCE_URL: str = "http://localhost:8069"
+    DATABASE_ECOMMERCE_URI: str = ""
+    ECOMMERCE_SECRET_KEY: str = ""
+    ECOMMERCE_SEARCH_ENGINE: str = "api"
+
     # OpenAI
     OPENAI_TOKEN: str = Field(default=None)
     OPENAI_API_BASE: str = ""

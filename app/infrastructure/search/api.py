@@ -41,7 +41,7 @@ class ApiSearchClient:
     def _build_api_response(self, response, text):
         response_content = ""
         if not response["data"]:
-            return f"Nenhum produto encontrado com a busca realizada: *{text}*.\n Tente fornercer mais informações sobre o produto ou veículo para que possamos te ajudar.\nex: *Pastilha de freio dianteira para o veículo Fiat Uno 2010*\n *Peças para o veículo Fiat Uno 2010*"
+            return f"Nenhum produto encontrado com a busca realizada: *{text}*.\n\nTente fornercer mais informações sobre o produto ou veículo para que possamos te ajudar.\n\nex:\n\n*Pastilha de freio dianteira para o veículo Fiat Uno 2010*\n*Peças para o veículo Fiat Uno 2010*"
 
         for item in response["data"][0:1]:
             response_content += f"*Código:* {item['default_code']}\n"
@@ -55,7 +55,7 @@ class ApiSearchClient:
 
         if len(response["data"]) > 1:
             response_content += f"Encontramos *{len(response['data'])}* produtos com a busca realizada: *{text}*.\n"
-            response_content += f"Para ver todos os produtos, acesse o link abaixo:\n{'https://pecastecauto.com.br'}/shop?search={quote(text)}"
+            response_content += f"Para ver todos os produtos, acesse o link abaixo:\n{self.__settings.BASE_ECOMMERCE_URL}/shop?search={quote(text)}"
 
         return response_content
 
